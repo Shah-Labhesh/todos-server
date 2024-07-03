@@ -26,12 +26,19 @@ public class Users{
     private UUID id;
     @JsonIgnore
     private String password;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     @Builder.Default
     private boolean isVerified = false;
+    private String verificationToken;
+    private String resetPasswordToken;
     private Timestamp createdDate;
     private Timestamp updatedDate;
     private Timestamp deletedDate;
+
+    @PrePersist
+    public void prePersist() {
+        createdDate = new Timestamp(System.currentTimeMillis());
+    }
 
 }

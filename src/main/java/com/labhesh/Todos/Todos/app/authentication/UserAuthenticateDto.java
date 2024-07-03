@@ -1,21 +1,21 @@
 package com.labhesh.Todos.Todos.app.authentication;
 
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAuthenticateDto {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is invalid")
+
+    @NotBlank(message = "email cannot be empty")
+    @Email(message = "email should be valid")
     private String email;
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @NotBlank(message = "password cannot be empty")
+    @Size(min = 8 , message = "password should be at least 8 characters long")
     private String password;
 }
