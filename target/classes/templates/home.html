@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Successful</title>
+    <title>Home - Mobile App</title>
     <style>
         body {
             display: flex;
@@ -11,7 +11,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #7fffff, #acfff5);
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
             animation: backgroundAnimation 15s infinite;
@@ -24,15 +24,15 @@
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             animation: fadeIn 1s ease-in-out;
-            max-width: 500px;
+            max-width: 800px;
             width: 100%;
             box-sizing: border-box;
         }
 
         h1 {
             margin: 0;
-            font-size: 2.5em;
-            color: #4CAF50;
+            font-size: 3em;
+            color: #3498db;
             animation: textFadeIn 2s ease-in-out;
         }
 
@@ -43,21 +43,33 @@
             line-height: 1.5;
         }
 
+        .btn-group {
+            margin-top: 20px;
+        }
+
         .btn {
             display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
+            margin: 10px;
+            padding: 15px 25px;
             font-size: 1em;
             color: white;
-            background-color: #4CAF50;
+            background-color: #3498db;
             border: none;
             border-radius: 5px;
             text-decoration: none;
-            transition: background-color 0.3s ease-in-out;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
+            transform: translateY(-5px);
+        }
+
+        .btn img {
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
         }
 
         @keyframes fadeIn {
@@ -81,15 +93,15 @@
         }
 
         @keyframes backgroundAnimation {
-            0%, 100% { background: linear-gradient(135deg, #74ebd5, #acb6e5); }
-            50% { background: linear-gradient(135deg, #acb6e5, #74ebd5); }
+            0%, 100% { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
+            50% { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
         }
 
         .icon {
-            font-size: 4em;
-            color: #4CAF50;
+            font-size: 6em;
+            color: #3498db;
             margin-bottom: 20px;
-            animation: iconBounce 2s infinite;
+            animation: iconBounce 1s infinite;
         }
 
         @keyframes iconBounce {
@@ -100,10 +112,19 @@
 </head>
 <body>
 <div class="container">
-    <div class="icon">✔️</div>
-    <h1>Verification Successful</h1>
-    <p>Your email has been successfully verified. You can now enjoy all the features our service offers.</p>
-    <p>If you have any questions or need further assistance, please do not hesitate to contact our support team.</p>
+    <div class="icon">📱</div>
+    <h1>Welcome to Our Mobile App</h1>
+    <p>Experience the best features and seamless performance with our mobile app. Download now from your favorite store!</p>
+    <div class="btn-group">
+        <a href="https://play.google.com/store" target="_blank" class="btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play">
+            Get it on Google Play
+        </a>
+        <a href="https://www.apple.com/app-store/" target="_blank" class="btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Available_on_the_App_Store_%28black%29.png" alt="App Store">
+            Download on the App Store
+        </a>
+    </div>
 </div>
 </body>
 </html>

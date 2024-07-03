@@ -2,6 +2,7 @@ package com.labhesh.Todos.Todos.app.authentication;
 
 import com.labhesh.Todos.Todos.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +25,6 @@ public class WebController {
         }
     }
 
-    @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam("email") String email) throws InternalServerException {
-        authenticationService.resetPassword(email);
-        return "reset_password_email_sent";
-    }
-
     @GetMapping("/reset-password")
     public String showResetPasswordForm(@RequestParam("token") String token, Model model) {
         model.addAttribute("token", token);
@@ -43,5 +38,11 @@ public class WebController {
         } else {
             return "update_password_fail";
         }
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "home";
+
     }
 }

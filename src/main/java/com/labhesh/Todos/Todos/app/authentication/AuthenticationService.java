@@ -80,14 +80,16 @@ public class AuthenticationService {
         return false;
     }
 
-    public void resetPassword(String email) throws InternalServerException {
+    public ResponseEntity<?> resetPassword(String email) throws InternalServerException, BadRequestException {
         Optional<Users> userOptional = usersRepo.findByEmail(email);
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
             user.setResetPasswordToken(UUID.randomUUID().toString());
             usersRepo.save(user);
             mailService.sendResetPasswordEmail(user);
+            return ResponseEntity.ok(new SuccessResponse("Reset password email sent", null, null));
         }
+        throw new BadRequestException("User not found");
     }
 
     public boolean updatePassword(String token, String newPassword) {

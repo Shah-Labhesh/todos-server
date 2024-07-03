@@ -9,6 +9,7 @@ import com.labhesh.Todos.Todos.utils.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -90,6 +91,16 @@ public class ApplicationExceptionHandler {
         return ErrorResponse.builder()
                 .code(400)
                 .error("Bad Request")
+                .message(List.of(e.getMessage()))
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ErrorResponse handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        return ErrorResponse.builder()
+                .code(404)
+                .error("Not Found")
                 .message(List.of(e.getMessage()))
                 .build();
     }
