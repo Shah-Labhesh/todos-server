@@ -34,7 +34,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> resetPassword(@RequestBody @RequestPart("email") String email) throws InternalServerException, BadRequestException {
+    public ResponseEntity<?> resetPassword(@RequestParam("email") String email) throws InternalServerException, BadRequestException {
        return authenticationService.resetPassword(email);
     }
 
