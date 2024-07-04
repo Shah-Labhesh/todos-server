@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface TeamsRepo extends JpaRepository<Teams, UUID> {
-    @Query("SELECT t FROM Teams t WHERE t.teamLead.id = :userId OR :userId MEMBER OF t.teamMembers")
+    @Query("SELECT t FROM Teams t JOIN t.teamMembers tm WHERE t.teamLead.id = :userId OR tm.id = :userId")
     List<Teams> findAllByTeamLeadIdOrTeamMembersId(@Param("userId") UUID userId);
 }

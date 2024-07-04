@@ -56,10 +56,7 @@ public class FriendshipService {
     // all friends of a user
     public ResponseEntity<?> getFriends(UUID userId) throws BadRequestException {
         Users user = usersRepo.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
-        List<Users> friends =  friendshipRepo.findAllByUserAndAcceptedIsTrue(user)
-                .stream()
-                .map(FriendShip::getFriend)
-                .collect(Collectors.toList());
+        List<FriendShip> friends =  friendshipRepo.findAllByUserAndAcceptedIsTrue(user);
         return ResponseEntity.ok(friends);
     }
 

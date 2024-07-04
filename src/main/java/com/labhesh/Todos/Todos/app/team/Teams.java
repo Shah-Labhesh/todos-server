@@ -25,7 +25,7 @@ public class Teams {
 
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "teamLead", referencedColumnName = "uuid")
     private Users teamLead;
 
