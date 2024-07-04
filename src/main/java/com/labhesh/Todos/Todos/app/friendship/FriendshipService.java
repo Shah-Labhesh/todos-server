@@ -49,8 +49,17 @@ public class FriendshipService {
         }
     }
 
+    // teamlead, member
     public boolean areFriends(UUID userId, UUID friendId) {
-        return friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(userId, friendId).isEmpty();
+System.out.println(userId);
+System.out.println(friendId);
+        System.out.println(friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(userId, friendId).isEmpty());
+        System.out.println(friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(friendId, userId).isPresent());
+        if ( friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(userId, friendId).isEmpty()) {
+            return friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(friendId, userId).isPresent();
+        }else{
+            return true;
+        }
     }
 
     // all friends of a user

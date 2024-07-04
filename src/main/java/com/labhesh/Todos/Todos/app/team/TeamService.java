@@ -32,10 +32,11 @@ public class TeamService {
         for (String memberId : createTeamDto.getTeamMembers()) {
             Users member = usersRepository.findById(UUID.fromString(memberId))
                     .orElseThrow(() -> new BadRequestException("User not found"));
-            if (friendshipService.areFriends(teamLead.getId(), member.getId())) {
+            if (!friendshipService.areFriends(teamLead.getId(), member.getId())) {
                 throw new BadRequestException("Users must be friends to join the same team");
             }
             teamMembers.add(member);
+            teamMembers.add(teamLead);
         }
 
         Teams team = Teams.builder()

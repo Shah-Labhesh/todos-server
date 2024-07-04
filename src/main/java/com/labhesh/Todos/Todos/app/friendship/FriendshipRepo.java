@@ -17,6 +17,9 @@ public interface FriendshipRepo extends JpaRepository<FriendShip, UUID> {
     @Query("SELECT f FROM FriendShip f WHERE f.user.id = ?1 AND f.friend.id = ?2 AND f.isAccepted = true")
     Optional<FriendShip> findByUserIdAndFriendIdAndAcceptedIsTrue(UUID userId, UUID friendId);
 
+    @Query("SELECT f FROM FriendShip f WHERE f.user.id = ?1 AND f.friend.id = ?2 AND f.isAccepted = true OR f.user.id = ?2 AND f.friend.id = ?1 AND f.isAccepted = true")
+    boolean isMyFriend(UUID userId, UUID friendId);
+
     @Query("SELECT f FROM FriendShip f WHERE f.user = ?1 OR f.friend = ?1 AND f.isAccepted = true")
     List<FriendShip> findAllByUserAndAcceptedIsTrue(Users user);
 
