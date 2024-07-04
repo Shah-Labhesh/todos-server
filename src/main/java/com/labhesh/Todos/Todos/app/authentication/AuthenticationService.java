@@ -47,7 +47,7 @@ public class AuthenticationService {
             Users user = usersRepo.findByEmail(userAuthenticateDto.getEmail()).orElseThrow(() -> new BadRequestException("Invalid credentials"));
             System.out.println(PasswordEncoder.matches(userAuthenticateDto.getPassword(), user.getPassword()));
             if (PasswordEncoder.matches(userAuthenticateDto.getPassword(), user.getPassword())) {
-                return ResponseEntity.badRequest().body("Invalid password");
+                throw new BadRequestException("Invalid password");
             }
             if (!user.isVerified()) {
 
