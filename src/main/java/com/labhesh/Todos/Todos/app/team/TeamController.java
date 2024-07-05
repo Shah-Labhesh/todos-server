@@ -26,19 +26,19 @@ public class TeamController {
      }
 
      @Operation(summary = "Add a new member to a team", description = "team lead can add a new member to the team. The member must be a friend of the team lead.")
-     @PostMapping("/add-member")
+     @PutMapping
      public ResponseEntity<?> addMember(@Valid @RequestBody AddMemberDto addMemberDto) throws BadRequestException {
          return teamService.addTeamMember(addMemberDto);
      }
 
      @Operation(summary = "Get all teams of a user", description = "Get all teams of a user")
-     @GetMapping("/get-teams")
+     @GetMapping
      public ResponseEntity<?> getTeams() throws BadRequestException {
          return teamService.getTeams();
      }
 
      @Operation(summary = "Get a team by id", description = "Get a team by id")
-     @GetMapping("/get-team/{teamId}")
+     @GetMapping("{teamId}")
      public ResponseEntity<?> getTeam(@PathVariable String teamId) {
          return teamService.getTeam(teamId);
      }

@@ -41,6 +41,6 @@ public class AuthenticationController {
 
     @PostMapping("upload-avatar/{userId}")
     public ResponseEntity<?> uploadAvatar(@PathVariable("userId") String userId, @RequestPart("avatar") MultipartFile avatar) throws InternalServerException, BadRequestException {
-        return authenticationService.uploadAvatar(userId, avatar);
+        return authenticationService.uploadAvatar(userId,avatar);
     }
 }

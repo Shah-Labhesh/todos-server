@@ -11,6 +11,7 @@ import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -65,9 +66,12 @@ public class AuthenticationService {
                 mailService.sendVerificationEmail(user);
                 throw new BadRequestException("User not verified");
             }
+            HashMap<String, Object> response = new HashMap<>();
+            response.put("message", "User logged in successfully");
+            response.put("token", util.generateToken(user));
+            response.put("data", user);
 
-
-            return ResponseEntity.ok(new SuccessResponse("User logged in successfully", util.generateToken(user), null));
+            return ResponseEntity.ok(response);
         }catch (BadRequestException e){
             throw new BadRequestException(e.getMessage());
         }
@@ -114,8 +118,7 @@ public class AuthenticationService {
     }
 
     public ResponseEntity<?> uploadAvatar(String userId, MultipartFile avatar) throws BadRequestException, InternalServerException {
-        UUID id = UUID.fromString(userId);
-        Users user = usersRepo.findById(id).orElseThrow(() -> new BadRequestException("User not found"));
+        Users user = usersRepo.findById(UUID.fromString(userId)).orElseThrow(() -> new BadRequestException("User not found"));
         try{
             if (!avatar.isEmpty()){
                 user.setAvatarMediaType(avatar.getContentType());

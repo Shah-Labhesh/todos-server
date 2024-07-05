@@ -59,7 +59,7 @@ public class ImageService {
     public MediaType getImageContentType(String contentType){
         if (contentType.equals("image/png")) {
             return MediaType.IMAGE_PNG;
-        } else if (contentType.equals("image/jpg")) {
+        } else if (contentType.equals("image/jpg") || contentType.equals("image/jpeg")) {
             return MediaType.IMAGE_JPEG;
         }else{
             return MediaType.IMAGE_GIF;

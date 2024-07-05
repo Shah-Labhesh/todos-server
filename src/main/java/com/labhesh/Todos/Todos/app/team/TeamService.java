@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -65,6 +66,10 @@ public class TeamService {
         List<Users> teamMembers = team.getTeamMembers();
         teamMembers.addAll(newMembers);
         team.setTeamMembers(teamMembers);
+        if (addMemberDto.getTeamName() != null){
+            team.setName(addMemberDto.getTeamName());
+        }
+        team.setTeamUpdatedDate(new Timestamp(System.currentTimeMillis()));
         teamsRepository.save(team);
         return ResponseEntity.ok(team);
     }
