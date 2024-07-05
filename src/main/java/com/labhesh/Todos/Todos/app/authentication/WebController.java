@@ -22,8 +22,7 @@ public class WebController {
 
 
     private final AuthenticationService authenticationService;
-    private final ImageService imageService;
-    private final UsersRepo usersRepo;
+
 
     @GetMapping("/verify")
     public String verifyUser(@RequestParam("token") String token) {
@@ -49,19 +48,7 @@ public class WebController {
         }
     }
 
-    @GetMapping("/{avatar}")
-    public ResponseEntity<?> getAvatar(@PathVariable("avatar") String avatar) throws BadRequestException, InternalServerException {
 
-        Users user = usersRepo.findByAvatarPath(avatar).orElseThrow(
-                () -> new BadRequestException("Image not found")
-        );
-
-        try {
-           return ResponseEntity.ok().contentType(imageService.getImageContentType(user.getAvatarMediaType())).body(imageService.getImage(avatar));
-        } catch (Exception e) {
-            throw new InternalServerException(e.getMessage());
-        }
-    }
 
     @GetMapping("/")
     public String home() {
