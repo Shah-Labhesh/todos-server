@@ -12,8 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AddMemberDto {
 
-    @NotBlank(message = "User Id is required")
-    private String userId;
     @NotBlank(message = "Team Id is required")
     private String teamId;
     @NotBlank(message = "Team Members are required")

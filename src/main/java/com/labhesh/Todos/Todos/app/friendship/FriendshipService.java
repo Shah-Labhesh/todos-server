@@ -6,6 +6,7 @@ import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,22 +25,26 @@ public class FriendshipService {
     private final UsersRepo usersRepo;
 
 
-    public ResponseEntity<?> sendFriendRequest(UUID userId, UUID friendId) throws BadRequestException {
-        Users user = usersRepo.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
+    public ResponseEntity<?> sendFriendRequest(UUID friendId) throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         Users friend = usersRepo.findById(friendId).orElseThrow(() -> new BadRequestException("Friend not found"));
 
         FriendShip friendship = FriendShip.builder()
                 .user(user)
                 .friend(friend)
-                .sentBy(userId)
+                .sentBy(user.getId())
                 .build();
 
         friendshipRepo.save(friendship);
         return ResponseEntity.ok(new SuccessResponse("Friend request sent", friendship, null));
     }
 
-    public ResponseEntity<?> acceptFriendRequest(UUID userId, UUID friendId, Boolean value) throws BadRequestException {
-        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(userId, friendId);
+    public ResponseEntity<?> acceptFriendRequest(UUID friendId, Boolean value) throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+
+        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(user.getId(), friendId);
         if (optionalFriendship.isPresent()) {
             FriendShip friendship = optionalFriendship.get();
             if (!value){
@@ -54,10 +59,8 @@ public class FriendshipService {
         }
     }
 
-    // teamlead, member
-    public boolean areFriends(UUID userId, UUID friendId) {
-System.out.println(userId);
-System.out.println(friendId);
+    public boolean areFriends(UUID userId, UUID friendId){
+
         System.out.println(friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(userId, friendId).isEmpty());
         System.out.println(friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(friendId, userId).isPresent());
         if ( friendshipRepo.findByUserIdAndFriendIdAndAcceptedIsTrue(userId, friendId).isEmpty()) {
@@ -68,20 +71,24 @@ System.out.println(friendId);
     }
 
     // all friends of a user
-    public ResponseEntity<?> getFriends(UUID userId) throws BadRequestException {
-        Users user = usersRepo.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
+    public ResponseEntity<?> getFriends() throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         List<FriendShip> friends =  friendshipRepo.findAllByUserAndAcceptedIsTrue(user);
         return ResponseEntity.ok(friends);
     }
 
     // cancel friend request
-    public ResponseEntity<?> cancelFriendRequest(UUID userId, UUID friendId) throws BadRequestException {
-        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(userId, friendId);
+    public ResponseEntity<?> cancelFriendRequest(UUID friendId) throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+
+        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(user.getId(), friendId);
 
         if (optionalFriendship.isEmpty()) {
             throw new BadRequestException("Friend request not found");
         }
-        if (!optionalFriendship.get().getSentBy().equals(userId)){
+        if (!optionalFriendship.get().getSentBy().equals(user.getId())){
             throw new BadRequestException("You are not authorized to cancel this request");
         }
         if (optionalFriendship.get().isAccepted()) {
@@ -92,8 +99,11 @@ System.out.println(friendId);
     }
 
     // unfriend
-    public ResponseEntity<?> unfriend(UUID userId, UUID friendId) throws BadRequestException {
-        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(userId, friendId);
+    public ResponseEntity<?> unfriend(UUID friendId) throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+
+        Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(user.getId(), friendId);
         if (optionalFriendship.isEmpty()) {
             throw new BadRequestException("Friend request not found");
         }
@@ -107,20 +117,23 @@ System.out.println(friendId);
     }
 
     // get friend requests
-    public ResponseEntity<?> getFriendRequests(UUID userId) {
-        List<FriendShip> friendRequests = friendshipRepo.findAllByFriendIdAndAcceptedIsFalse(userId);
+    public ResponseEntity<?> getFriendRequests() throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+
+        List<FriendShip> friendRequests = friendshipRepo.findAllByFriendIdAndAcceptedIsFalse(user.getId());
         return ResponseEntity.ok(friendRequests);
     }
 
     // get all users except friends and self
-    public ResponseEntity<?> getAllUsersExceptFriends(UUID userId) throws BadRequestException {
-        Users user = usersRepo.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
-        List<FriendShip> friends = friendshipRepo.findAllMyFriend(userId,userId);
+    public ResponseEntity<?> getAllUsersExceptFriends() throws BadRequestException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
+        List<FriendShip> friends = friendshipRepo.findAllMyFriend(user.getId(), user.getId());
         List<Users> otherUsers = new ArrayList<>();
-        // check i am a user or friend if friend then add to user to list else
         if (!friends.isEmpty()) {
             friends.forEach(friend -> {
-                if (friend.getUser().getId().equals(userId)) {
+                if (friend.getUser().getId().equals(user.getId())) {
                     otherUsers.add(friend.getFriend());
                 } else {
                     otherUsers.add(friend.getUser());

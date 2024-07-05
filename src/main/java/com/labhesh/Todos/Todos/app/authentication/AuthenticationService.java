@@ -2,6 +2,7 @@ package com.labhesh.Todos.Todos.app.authentication;
 
 import com.labhesh.Todos.Todos.app.user.Users;
 import com.labhesh.Todos.Todos.app.user.UsersRepo;
+import com.labhesh.Todos.Todos.config.JwtTokenUtil;
 import com.labhesh.Todos.Todos.config.PasswordEncoder;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
@@ -10,6 +11,8 @@ import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +28,7 @@ public class AuthenticationService {
     private final UsersRepo usersRepo;
     private final MailService mailService;
     private final ImageService imageService;
+    private final JwtTokenUtil util;
 
     public ResponseEntity<?> registerUser(UserRegistrationDto userRegistrationDto) throws InternalServerException {
         try {
@@ -63,7 +67,7 @@ public class AuthenticationService {
             }
 
 
-            return ResponseEntity.ok(new SuccessResponse("User logged in successfully", user, null));
+            return ResponseEntity.ok(new SuccessResponse("User logged in successfully", util.generateToken(user), null));
         }catch (BadRequestException e){
             throw new BadRequestException(e.getMessage());
         }
@@ -123,6 +127,18 @@ public class AuthenticationService {
         }
         catch (Exception e){
             throw new InternalServerException(e.getMessage());
+        }
+    }
+
+    public UserDetails loadUserByUsername(String username) throws BadRequestException {
+        Users user = usersRepo.findByEmail(username).orElseThrow(() -> new BadRequestException("User not found"));
+        if (user != null) {
+            if (!user.isVerified()){
+                throw new BadRequestException("User is not verified");
+            }
+            return user;
+        } else {
+            throw new UsernameNotFoundException("User not found.");
         }
     }
 }

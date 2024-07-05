@@ -2,23 +2,25 @@ package com.labhesh.Todos.Todos.app.team;
 
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 @Tag(name = "Team", description = "Team related endpoints")
 @RestController
 @RequestMapping("/api/team")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "auth")
 public class TeamController {
 
     private final TeamService teamService;
 
      @Operation(summary = "Create a new team", description = "team lead can create a new team and add members to the team")
-     @PostMapping("/create")
+     @PostMapping
      public ResponseEntity<?> createTeam(@Valid @RequestBody CreateTeamDto createTeamDto) throws BadRequestException {
          return teamService.createTeam(createTeamDto);
      }
@@ -30,9 +32,9 @@ public class TeamController {
      }
 
      @Operation(summary = "Get all teams of a user", description = "Get all teams of a user")
-     @GetMapping("/get-teams/{userId}")
-     public ResponseEntity<?> getTeams(@PathVariable String userId) {
-         return teamService.getTeams(userId);
+     @GetMapping("/get-teams")
+     public ResponseEntity<?> getTeams() throws BadRequestException {
+         return teamService.getTeams();
      }
 
      @Operation(summary = "Get a team by id", description = "Get a team by id")

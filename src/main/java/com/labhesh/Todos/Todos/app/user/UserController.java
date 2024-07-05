@@ -3,13 +3,12 @@ package com.labhesh.Todos.Todos.app.user;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
 import com.labhesh.Todos.Todos.utils.ImageService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -20,6 +19,7 @@ public class UserController {
 
     private final ImageService imageService;
     private final UsersRepo usersRepo;
+    private final UserService userService;
 
     @GetMapping("/avatar/{avatar}")
     public ResponseEntity<?> getAvatar(@PathVariable("avatar") String avatar) throws BadRequestException, InternalServerException {
@@ -34,4 +34,18 @@ public class UserController {
             throw new InternalServerException(e.getMessage());
         }
     }
+
+    @SecurityRequirement(name = "auth")
+    @GetMapping
+    public ResponseEntity<?> getMe() throws BadRequestException {
+        return userService.getMe();
+    }
+
+    @SecurityRequirement(name = "auth")
+    @PutMapping
+    public ResponseEntity<?> updateMe(@RequestBody @Valid @ModelAttribute UpdateUserDto updateUserDto) throws BadRequestException, InternalServerException {
+        return userService.updateMe(updateUserDto);
+    }
+
+
 }
