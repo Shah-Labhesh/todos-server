@@ -26,8 +26,8 @@ public class FriendshipController {
 
     @Operation(summary = "Accept a friend request", description = "Accept a friend request from another user")
     @PostMapping("/accept-request")
-    public ResponseEntity<?> acceptFriendRequest(@RequestParam UUID userId, @RequestParam UUID friendId) throws BadRequestException {
-        return friendshipService.acceptFriendRequest(userId, friendId);
+    public ResponseEntity<?> acceptFriendRequest(@RequestParam UUID userId, @RequestParam UUID friendId, @RequestParam Boolean value) throws BadRequestException {
+        return friendshipService.acceptFriendRequest(userId, friendId, value);
     }
 
     @Operation(summary = "Get all friends of a user", description = "Get all friends of a user")

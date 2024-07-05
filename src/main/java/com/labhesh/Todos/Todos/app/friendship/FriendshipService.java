@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,10 +38,14 @@ public class FriendshipService {
         return ResponseEntity.ok(new SuccessResponse("Friend request sent", friendship, null));
     }
 
-    public ResponseEntity<?> acceptFriendRequest(UUID userId, UUID friendId) throws BadRequestException {
+    public ResponseEntity<?> acceptFriendRequest(UUID userId, UUID friendId, Boolean value) throws BadRequestException {
         Optional<FriendShip> optionalFriendship = friendshipRepo.findByUserIdAndFriendId(userId, friendId);
         if (optionalFriendship.isPresent()) {
             FriendShip friendship = optionalFriendship.get();
+            if (!value){
+                friendshipRepo.delete(friendship);
+                return ResponseEntity.ok(new SuccessResponse("Friend request rejected", friendship, null));
+            }
             friendship.setAccepted(true);
             friendshipRepo.save(friendship);
             return ResponseEntity.ok(new SuccessResponse("Friend request accepted", friendship, null));
@@ -110,11 +115,21 @@ System.out.println(friendId);
     // get all users except friends and self
     public ResponseEntity<?> getAllUsersExceptFriends(UUID userId) throws BadRequestException {
         Users user = usersRepo.findById(userId).orElseThrow(() -> new BadRequestException("User not found"));
-        List<Users> friends = friendshipRepo.findAllByUserAndAcceptedIsTrue(user)
-                .stream()
-                .map(FriendShip::getFriend)
-                .collect(Collectors.toList());
-        friends.add(user);
-        return ResponseEntity.ok(usersRepo.findAll().stream().filter(u -> !friends.contains(u)).collect(Collectors.toList()));
+        List<FriendShip> friends = friendshipRepo.findAllMyFriend(userId,userId);
+        List<Users> otherUsers = new ArrayList<>();
+        // check i am a user or friend if friend then add to user to list else
+        if (!friends.isEmpty()) {
+            friends.forEach(friend -> {
+                if (friend.getUser().getId().equals(userId)) {
+                    otherUsers.add(friend.getFriend());
+                } else {
+                    otherUsers.add(friend.getUser());
+                }
+            });
+        }
+        // remove friends from all users
+        List<Users> users = usersRepo.findAll().stream().filter(u -> !otherUsers.contains(u)).collect(Collectors.toList());
+        users.remove(user);
+        return ResponseEntity.ok(users);
     }
 }

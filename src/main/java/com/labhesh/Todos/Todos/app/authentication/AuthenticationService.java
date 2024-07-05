@@ -5,12 +5,15 @@ import com.labhesh.Todos.Todos.app.user.UsersRepo;
 import com.labhesh.Todos.Todos.config.PasswordEncoder;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
+import com.labhesh.Todos.Todos.utils.ImageService;
 import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,15 +24,17 @@ public class AuthenticationService {
 
     private final UsersRepo usersRepo;
     private final MailService mailService;
+    private final ImageService imageService;
 
-    public ResponseEntity<?> registerUser(UserAuthenticateDto userAuthenticateDto) throws InternalServerException {
+    public ResponseEntity<?> registerUser(UserRegistrationDto userRegistrationDto) throws InternalServerException {
         try {
-            System.out.println("userAuthenticateDto.getEmail() = " + userAuthenticateDto.getEmail());
-            System.out.println("userAuthenticateDto.getPassword() = " + userAuthenticateDto.getPassword());
+            System.out.println("userAuthenticateDto.getEmail() = " + userRegistrationDto.getEmail());
+            System.out.println("userAuthenticateDto.getPassword() = " + userRegistrationDto.getPassword());
 
             Users user = Users.builder()
-                    .email(userAuthenticateDto.getEmail())
-                    .password(PasswordEncoder.encodePassword(userAuthenticateDto.getPassword()))
+                    .username(userRegistrationDto.getUsername())
+                    .email(userRegistrationDto.getEmail())
+                    .password(PasswordEncoder.encodePassword(userRegistrationDto.getPassword()))
                     .verificationToken(UUID.randomUUID().toString())
                     .build();
             usersRepo.save(user);
@@ -104,4 +109,20 @@ public class AuthenticationService {
         return false;
     }
 
+    public ResponseEntity<?> uploadAvatar(String userId, MultipartFile avatar) throws BadRequestException, InternalServerException {
+        UUID id = UUID.fromString(userId);
+        Users user = usersRepo.findById(id).orElseThrow(() -> new BadRequestException("User not found"));
+        try{
+            if (!avatar.isEmpty()){
+                user.setAvatarMediaType(avatar.getContentType());
+                user.setAvatarPath(imageService.saveImageToStorage(avatar));
+                usersRepo.save(user);
+            }
+
+            return ResponseEntity.ok(new SuccessResponse("Image Uploaded successfully", user, null));
+        }
+        catch (Exception e){
+            throw new InternalServerException(e.getMessage());
+        }
+    }
 }

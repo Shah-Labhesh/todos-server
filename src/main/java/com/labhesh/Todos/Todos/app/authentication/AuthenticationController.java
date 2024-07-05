@@ -9,6 +9,7 @@ import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -29,7 +30,7 @@ public class AuthenticationController {
 
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserAuthenticateDto userRegisterDto) throws InternalServerException {
+    public ResponseEntity<?> register(@RequestBody @Valid UserRegistrationDto userRegisterDto) throws InternalServerException {
         return authenticationService.registerUser(userRegisterDto);
     }
 
@@ -38,4 +39,8 @@ public class AuthenticationController {
        return authenticationService.resetPassword(email);
     }
 
+    @PostMapping("upload-avatar/{userId}")
+    public ResponseEntity<?> uploadAvatar(@PathVariable("userId") String userId, @RequestPart("avatar") MultipartFile avatar) throws InternalServerException, BadRequestException {
+        return authenticationService.uploadAvatar(userId, avatar);
+    }
 }

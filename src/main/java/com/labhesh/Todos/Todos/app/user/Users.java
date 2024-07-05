@@ -1,8 +1,6 @@
 package com.labhesh.Todos.Todos.app.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.labhesh.Todos.Todos.app.friendship.FriendShip;
-import com.labhesh.Todos.Todos.app.team.Teams;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 @Entity
 @Table(name = "users")
@@ -25,10 +21,11 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, name = "uuid", updatable = false)
     private UUID id;
-
+    private String username;
     @JsonIgnore
     private String password;
-
+    private String avatarPath;
+    private String avatarMediaType;
     @Column(unique = true, nullable = false)
     private String email;
 
