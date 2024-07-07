@@ -33,9 +33,9 @@ public class UserService {
         if (!updateUserDto.getEmail().isEmpty()){
             user.setEmail(updateUserDto.getEmail());
         }
-        if (!updateUserDto.getPassword().isEmpty()){
-            user.setPassword(updateUserDto.getPassword());
-        }
+//        if (!updateUserDto.getPassword().isEmpty()){
+//            user.setPassword(updateUserDto.getPassword());
+//        }
         if (!updateUserDto.getAvatar().isEmpty()){
             try {
                 user.setAvatarPath(imageService.saveImageToStorage(updateUserDto.getAvatar()));

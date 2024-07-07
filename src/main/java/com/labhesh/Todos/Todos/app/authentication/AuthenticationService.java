@@ -137,7 +137,7 @@ public class AuthenticationService {
         Users user = usersRepo.findByEmail(username).orElseThrow(() -> new BadRequestException("User not found"));
         if (user != null) {
             if (!user.isVerified()){
-                throw new BadRequestException("User is not verified");
+                throw new UsernameNotFoundException("User is not verified");
             }
             return user;
         } else {
