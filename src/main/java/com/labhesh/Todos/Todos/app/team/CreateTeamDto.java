@@ -17,9 +17,6 @@ public class CreateTeamDto {
     @Size(min = 3, max = 50, message = "Team Name should be between 3 and 50 characters")
     private String name;
 
-    @NotBlank(
-            message = "team members cannot be empty"
-    )
     private List<String> teamMembers;
 
 

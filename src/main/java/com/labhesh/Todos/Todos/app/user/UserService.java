@@ -28,7 +28,7 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Users user = usersRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         if (!updateUserDto.getUsername().isEmpty()){
-            user.setUsername(updateUserDto.getUsername());
+            user.setName(updateUserDto.getUsername());
         }
         if (!updateUserDto.getEmail().isEmpty()){
             user.setEmail(updateUserDto.getEmail());

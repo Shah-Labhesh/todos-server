@@ -29,7 +29,9 @@ public class TeamService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Users teamLead = usersRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
-
+        if (createTeamDto.getTeamMembers().isEmpty()) {
+            throw new BadRequestException("Team must have at least one member");
+        }
 
         List<Users> teamMembers = new ArrayList<>();
         for (String memberId : createTeamDto.getTeamMembers()) {

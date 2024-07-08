@@ -37,7 +37,7 @@ public class AuthenticationService {
             System.out.println("userAuthenticateDto.getPassword() = " + userRegistrationDto.getPassword());
 
             Users user = Users.builder()
-                    .username(userRegistrationDto.getUsername())
+                    .name(userRegistrationDto.getUsername())
                     .email(userRegistrationDto.getEmail())
                     .password(PasswordEncoder.encodePassword(userRegistrationDto.getPassword()))
                     .verificationToken(UUID.randomUUID().toString())

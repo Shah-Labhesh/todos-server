@@ -25,7 +25,7 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(unique = true, name = "uuid", updatable = false)
     private UUID id;
-    private String username;
+    private String name;
     @JsonIgnore
     private String password;
     private String avatarPath;
