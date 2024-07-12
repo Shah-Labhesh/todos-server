@@ -1,5 +1,6 @@
 package com.labhesh.Todos.Todos.app.messaging;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.labhesh.Todos.Todos.app.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,20 +23,22 @@ public class ChatRooms {
 
     private String roomName;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by", referencedColumnName = "uuid")
     private Users createdBy;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "chat_user",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "uuid")
-    )
-    private List<Users> user;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "chat_room_users",
+            joinColumns = @JoinColumn(name = "chat_room_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<Users> users;
 
     @Builder.Default
     private Timestamp createdDate = new Timestamp(System.currentTimeMillis());
     private Timestamp updatedDate;
     private Timestamp deletedDate;
+
+    private String lastMessage;
+    private Timestamp lastMessageTime;
+    private UUID lastMessageBy;
 }

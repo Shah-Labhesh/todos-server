@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface ChatRoomRepo extends JpaRepository<ChatRooms, UUID> {
 
-    @Query("SELECT c FROM ChatRooms c WHERE c.user = ?1")
-    List<ChatRooms> findAllByUsers(Users users);
+    @Query("SELECT c FROM ChatRooms c JOIN c.users u WHERE u = :user")
+    List<ChatRooms> findAllByUser(Users user);
 }

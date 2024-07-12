@@ -11,18 +11,20 @@ import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@EnableAsync
 @RequiredArgsConstructor
 public class AuthenticationService {
 
@@ -31,7 +33,8 @@ public class AuthenticationService {
     private final ImageService imageService;
     private final JwtTokenUtil util;
 
-    public ResponseEntity<?> registerUser(UserRegistrationDto userRegistrationDto) throws InternalServerException {
+    @Async
+    public CompletableFuture<ResponseEntity<?>> registerUser(UserRegistrationDto userRegistrationDto) throws InternalServerException {
         try {
             System.out.println("userAuthenticateDto.getEmail() = " + userRegistrationDto.getEmail());
             System.out.println("userAuthenticateDto.getPassword() = " + userRegistrationDto.getPassword());
@@ -44,7 +47,7 @@ public class AuthenticationService {
                     .build();
             usersRepo.save(user);
             mailService.sendVerificationEmail(user);
-            return ResponseEntity.created (null).body(new SuccessResponse("User registered successfully", user, null));
+            return CompletableFuture.completedFuture(ResponseEntity.created(null).body(new SuccessResponse("User registered successfully", user, null)));
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Email already exists");
         } catch (Exception e) {

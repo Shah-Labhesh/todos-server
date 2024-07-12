@@ -29,7 +29,7 @@ public class Teams {
     @JoinColumn(name = "teamLead", referencedColumnName = "uuid")
     private Users teamLead;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "team_members",
             joinColumns = @JoinColumn(name = "team_id"),

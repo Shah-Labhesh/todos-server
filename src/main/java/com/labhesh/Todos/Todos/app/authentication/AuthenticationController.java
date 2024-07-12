@@ -7,13 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import java.util.concurrent.CompletableFuture;
 
 
 @Tag(name = "Authentication", description = "Endpoints for user authentication")
@@ -33,7 +31,7 @@ public class AuthenticationController {
 
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserRegistrationDto userRegisterDto) throws InternalServerException {
+    public CompletableFuture<ResponseEntity<?>> register(@RequestBody @Valid UserRegistrationDto userRegisterDto) throws InternalServerException {
         return authenticationService.registerUser(userRegisterDto);
     }
 

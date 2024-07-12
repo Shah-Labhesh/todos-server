@@ -6,6 +6,7 @@ import com.labhesh.Todos.Todos.exception.ForbiddenException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -28,15 +29,33 @@ public class MessagingSocket {
      * Creates a chat room.
      */
     @MessageMapping("/create-room")
-    public void createChatRoom(@Payload @Valid CreateChatRoomDto dto) throws BadRequestException, ForbiddenException, InternalServerException {
+    public void createChatRoom(@Payload Map<String, Object> data) throws BadRequestException, ForbiddenException, InternalServerException {
+        Object user = data.get("usersId");
+        String token = data.get("token").toString();
+        String roomName = data.get("roomName").toString();
+        if (user == null || token == null || roomName == null) {
+            throw new BadRequestException("Missing required parameters");
+        }
+        List<String> usersId = new ArrayList<>();
+        if (user instanceof List<?>) {
+            for (Object id : (List<?>) user) {
+                usersId.add(id.toString());
+            }
+        } else {
+            usersId.add(user.toString());
+        }
+        CreateChatRoomDto dto = new CreateChatRoomDto();
+        dto.setRoomName(roomName);
+        dto.setToken(token);
+        dto.setUsersId(usersId);
+
+
         if (dto.getRoomName() == null || dto.getToken() == null || dto.getUsersId() == null) {
             throw new BadRequestException("Missing required parameters");
         }
 
-
         String userId = messageService.createChatRoom(dto);
         messagingTemplate.convertAndSend("/topic/" + userId, messageService.getChatRoom(dto.getToken()));
-
     }
 
     /**
@@ -49,8 +68,8 @@ public class MessagingSocket {
         if (token == null || userId == null) {
             throw new BadRequestException("Missing required parameters");
         }
-        List<ChatRooms> rooms = messageService.getChatRoom(token);
-        messagingTemplate.convertAndSend("/topic/" + userId, rooms);
+        ResponseEntity<?> response = messageService.getChatRoom(token);
+        messagingTemplate.convertAndSend("/topic/" + userId, response);
     }
 
     /**
@@ -66,7 +85,7 @@ public class MessagingSocket {
         }
         messageService.createMessage(roomId, token, message);
         List<Message> messages = messageService.getRoomMessages(roomId, token);
-        messagingTemplate.convertAndSend("/topic/" + roomId, messages);
+        messagingTemplate.convertAndSend("/topic/" + roomId, ResponseEntity.ok(messages));
     }
 
     /**
@@ -121,7 +140,7 @@ public class MessagingSocket {
             throw new BadRequestException("Missing required parameters");
         }
         List<Message> messages = messageService.getRoomMessages(roomId, token);
-        messagingTemplate.convertAndSend("/topic/" + roomId, messages);
+        messagingTemplate.convertAndSend("/topic/" + roomId, ResponseEntity.ok(messages));
     }
 
     /**

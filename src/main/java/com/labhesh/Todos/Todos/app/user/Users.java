@@ -1,6 +1,7 @@
 package com.labhesh.Todos.Todos.app.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.labhesh.Todos.Todos.app.messaging.ChatRooms;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 @Entity
 @Table(name = "users")

@@ -9,12 +9,15 @@ import com.labhesh.Todos.Todos.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MessageService {
 
@@ -25,17 +28,17 @@ public class MessageService {
     private final FriendshipService friendshipService;
 
 
-    public List<ChatRooms> getChatRoom(String token) throws BadRequestException {
+    public ResponseEntity<?> getChatRoom(String token) throws BadRequestException {
         String email = jwtHelper.getUsernameFromToken(token);
         Users users = userRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
-        return chatRoomRepo.findAllByUsers(users);
+        return ResponseEntity.ok(chatRoomRepo.findAllByUser(users));
     }
 
     public void createMessage(UUID roomId, String token, String message) throws BadRequestException, ForbiddenException {
         String email = jwtHelper.getUsernameFromToken(token);
         Users users = userRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         ChatRooms chatRooms = chatRoomRepo.findById(roomId).orElseThrow(() -> new BadRequestException("Room not found"));
-        if (!chatRooms.getUser().contains(users)) {
+        if (!chatRooms.getUsers().contains(users)) {
             throw new ForbiddenException("You are not allowed to send message in this room");
         }
         Message messages = Message.builder()
@@ -44,13 +47,18 @@ public class MessageService {
                 .sender(users)
                 .build();
         messageRepo.save(messages);
+
+        chatRooms.setLastMessage(message);
+        chatRooms.setLastMessageTime(messages.getSentAt());
+        chatRooms.setLastMessageBy(users.getId());
+        chatRoomRepo.save(chatRooms);
     }
 
     public List<Message> getRoomMessages(UUID roomId, String token) throws BadRequestException, ForbiddenException {
         String email = jwtHelper.getUsernameFromToken(token);
         Users users = userRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
         ChatRooms chatRooms = chatRoomRepo.findById(roomId).orElseThrow(() -> new BadRequestException("Room not found"));
-        if (!chatRooms.getUser().contains(users)) {
+        if (!chatRooms.getUsers().contains(users)) {
             throw new ForbiddenException("You are not allowed to send message in this room");
         }
         return messageRepo.findAllByChatRoom(chatRooms);
@@ -69,18 +77,32 @@ public class MessageService {
     public String createChatRoom(CreateChatRoomDto dto) throws BadRequestException, ForbiddenException {
         String email = jwtHelper.getUsernameFromToken(dto.getToken());
         Users user = userRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
-        List<Users> members = userRepo.findAllById(dto.getUsersId().stream().map(UUID::fromString).toList());
-        for (String userId : dto.getUsersId()) {
-            if (!friendshipService.areFriends(UUID.fromString(userId), user.getId())) {
+
+        List<Users> members = dto.getUsersId().stream()
+                .map(UUID::fromString)
+                .map(id -> {
+                    try {
+                        return userRepo.findById(id).orElseThrow(() -> new BadRequestException("User not found"));
+                    } catch (BadRequestException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        for (Users member : members) {
+            if (!friendshipService.areFriends(member.getId(), user.getId())) {
                 throw new ForbiddenException("You can only add friends to the room");
             }
         }
-        members.add(user);
+
+        members.add(user); // Add the current user to the list of members
+
         ChatRooms chatRooms = ChatRooms.builder()
                 .roomName(dto.getRoomName())
                 .createdBy(user)
-                .user(members)
+                .users(members)
                 .build();
+
         chatRoomRepo.save(chatRooms);
         return user.getId().toString();
     }
@@ -96,7 +118,7 @@ public class MessageService {
         }
         List<Users> members = userRepo.findAllById(usersId.stream().map(UUID::fromString).toList());
         members.add(user);
-        chatRooms.getUser().addAll(members);
+        chatRooms.getUsers().addAll(members);
         chatRoomRepo.save(chatRooms);
 
     }

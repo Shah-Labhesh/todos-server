@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                                 new AntPathRequestMatcher("/api/auth/**"),
                                 new AntPathRequestMatcher("/api/user/avatar/**"),
                                 new AntPathRequestMatcher("/verify/**"),
-                                new AntPathRequestMatcher("/ws/**")
+                                new AntPathRequestMatcher("/chat/**")
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/v1/admin/**")
