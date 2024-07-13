@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @SecurityScheme(
@@ -38,8 +40,18 @@ public class TodosApplication {
 	@Value("${swagger.api.contact.url}")
 	private String contactUrl;
 
+	@Value("${application.timezone}")
+	private String applicationTimeZone;
+
 	public static void main(String[] args) {
 		SpringApplication.run(TodosApplication.class, args);
+	}
+
+	@PostConstruct
+	public void executeAfterMain() {
+		TimeZone.setDefault(TimeZone.getTimeZone(applicationTimeZone));
+		System.out.println("Application Timezone set to : " + applicationTimeZone);
+		System.out.println("Application started at : " + java.time.LocalDateTime.now());
 	}
 
 

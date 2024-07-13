@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 @Entity
@@ -36,13 +37,9 @@ public class Teams {
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "uuid")
     )
     private List<Users> teamMembers;
+    @Builder.Default
+    private LocalDateTime teamCreatedDate = LocalDateTime.now();
+    private LocalDateTime teamUpdatedDate;
+    private LocalDateTime teamDeletedDate;
 
-    private Timestamp teamCreatedDate;
-    private Timestamp teamUpdatedDate;
-    private Timestamp teamDeletedDate;
-
-    @PrePersist
-    public void prePersist() {
-        teamCreatedDate = new Timestamp(System.currentTimeMillis());
-    }
 }

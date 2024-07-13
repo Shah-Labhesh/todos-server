@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ public class Task {
     private String title;
     private String description;
     @Builder.Default
-    private Timestamp createdDate = new Timestamp(System.currentTimeMillis());
-    private Timestamp dueDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime dueDate;
     @Builder.Default
     private double progress = 0;
     @Builder.Default

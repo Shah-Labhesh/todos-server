@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,7 +72,7 @@ public class TeamService {
         if (addMemberDto.getTeamName() != null){
             team.setName(addMemberDto.getTeamName());
         }
-        team.setTeamUpdatedDate(new Timestamp(System.currentTimeMillis()));
+        team.setTeamUpdatedDate(LocalDateTime.now());
         teamsRepository.save(team);
         return ResponseEntity.ok(team);
     }

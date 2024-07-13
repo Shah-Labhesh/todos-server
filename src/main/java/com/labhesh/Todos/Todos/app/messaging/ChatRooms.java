@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -34,11 +35,11 @@ public class ChatRooms {
     private List<Users> users;
 
     @Builder.Default
-    private Timestamp createdDate = new Timestamp(System.currentTimeMillis());
-    private Timestamp updatedDate;
-    private Timestamp deletedDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime updatedDate;
+    private LocalDateTime deletedDate;
 
     private String lastMessage;
-    private Timestamp lastMessageTime;
+    private LocalDateTime lastMessageTime;
     private UUID lastMessageBy;
 }

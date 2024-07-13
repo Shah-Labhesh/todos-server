@@ -31,7 +31,7 @@ public class MessageService {
     public ResponseEntity<?> getChatRoom(String token) throws BadRequestException {
         String email = jwtHelper.getUsernameFromToken(token);
         Users users = userRepo.findByEmail(email).orElseThrow(() -> new BadRequestException("User not found"));
-        return ResponseEntity.ok(chatRoomRepo.findAllByUser(users));
+        return ResponseEntity.ok(chatRoomRepo.findAllByUserOrderByLastMessageTimeDesc(users));
     }
 
     public void createMessage(UUID roomId, String token, String message) throws BadRequestException, ForbiddenException {

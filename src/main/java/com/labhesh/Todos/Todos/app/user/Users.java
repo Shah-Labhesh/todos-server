@@ -2,6 +2,7 @@ package com.labhesh.Todos.Todos.app.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.labhesh.Todos.Todos.app.messaging.ChatRooms;
+import com.labhesh.Todos.Todos.utils.DateUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,14 +47,12 @@ public class Users implements UserDetails {
 
     private String verificationToken;
     private String resetPasswordToken;
-    private Timestamp createdDate;
-    private Timestamp updatedDate;
-    private Timestamp deletedDate;
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP")
+    @Builder.Default
+    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime updatedDate;
+    private LocalDateTime deletedDate;
 
-    @PrePersist
-    public void prePersist() {
-        createdDate = new Timestamp(System.currentTimeMillis());
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

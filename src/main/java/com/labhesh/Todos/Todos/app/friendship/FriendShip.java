@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity
 @Table(name = "friendships")
@@ -35,10 +36,8 @@ public class FriendShip {
     @Builder.Default
     private boolean isAccepted = false;
 
-    private Timestamp createdDate;
+    @Builder.Default
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    @PrePersist
-    public void prePersist() {
-        createdDate = new Timestamp(System.currentTimeMillis());
-    }
+
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +29,7 @@ public class Message {
     @JoinColumn(name = "sender_id")
     private Users sender;
     @Builder.Default
-    private Timestamp sentAt = new Timestamp(System.currentTimeMillis());
+    private LocalDateTime sentAt = LocalDateTime.now();
     @Builder.Default
     private boolean isDeleted = false;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

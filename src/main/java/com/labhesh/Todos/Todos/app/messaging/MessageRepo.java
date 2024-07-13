@@ -10,6 +10,6 @@ import java.util.UUID;
 @Repository
 public interface MessageRepo extends JpaRepository<Message, UUID> {
 
-    @Query("SELECT m FROM Message m WHERE m.chatRoom = ?1")
+    @Query("SELECT m FROM Message m WHERE m.chatRoom = ?1 ORDER BY m.sentAt DESC")
     List<Message> findAllByChatRoom(ChatRooms chatRooms);
 }

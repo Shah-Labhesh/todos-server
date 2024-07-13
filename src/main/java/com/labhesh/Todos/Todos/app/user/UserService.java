@@ -3,6 +3,7 @@ package com.labhesh.Todos.Todos.app.user;
 
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
+import com.labhesh.Todos.Todos.utils.DateUtils;
 import com.labhesh.Todos.Todos.utils.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +46,7 @@ public class UserService {
                 throw new InternalServerException(e.getMessage());
             }
         }
-        user.setUpdatedDate(new Timestamp(System.currentTimeMillis()));
+        user.setUpdatedDate(LocalDateTime.now());
         return ResponseEntity.ok(user);
     }
 }
