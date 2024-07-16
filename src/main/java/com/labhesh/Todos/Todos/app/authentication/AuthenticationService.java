@@ -109,6 +109,7 @@ public class AuthenticationService {
     }
 
     public boolean updatePassword(String token, String newPassword) {
+        System.out.println("token = " + token);
         Optional<Users> userOptional = usersRepo.findByResetPasswordToken(token);
         if (userOptional.isPresent()) {
             Users user = userOptional.get();

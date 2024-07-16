@@ -47,7 +47,6 @@ public class Users implements UserDetails {
 
     private String verificationToken;
     private String resetPasswordToken;
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     @Builder.Default
     private LocalDateTime createdDate = LocalDateTime.now();
     private LocalDateTime updatedDate;

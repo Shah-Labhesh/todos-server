@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class UserController {
         );
 
         try {
-            return ResponseEntity.ok().contentType(imageService.getImageContentType(user.getAvatarMediaType())).body(imageService.getImage(avatar));
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(imageService.getImage(avatar));
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
         }

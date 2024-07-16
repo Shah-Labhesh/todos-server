@@ -13,6 +13,7 @@ public class CustomErrorController implements ErrorController {
     public String handleError(HttpServletRequest request) {
         // You can add more logic here to handle different types of errors
         // For now, we just return the 404 page for all errors
+
         return "404";
     }
 

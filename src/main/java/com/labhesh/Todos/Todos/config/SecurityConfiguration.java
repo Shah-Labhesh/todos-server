@@ -23,9 +23,9 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-
                         .requestMatchers(
                                 new AntPathRequestMatcher("/"),
+                                new AntPathRequestMatcher("/**"),
                                 new AntPathRequestMatcher("/swagger-ui/index.html"),
                                 new AntPathRequestMatcher("/context-path/**"),
                                 new AntPathRequestMatcher("/swagger-ui/**"),
