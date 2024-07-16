@@ -1,8 +1,7 @@
 package com.labhesh.Todos.Todos.app.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.labhesh.Todos.Todos.app.messaging.ChatRooms;
-import com.labhesh.Todos.Todos.utils.DateUtils;
+import com.labhesh.Todos.Todos.app.files.Files;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +10,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 @Entity
 @Table(name = "users")
@@ -33,8 +29,8 @@ public class Users implements UserDetails {
     private String name;
     @JsonIgnore
     private String password;
-    private String avatarPath;
-    private String avatarMediaType;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    private Files file;
     @Column(unique = true, nullable = false)
     private String email;
 

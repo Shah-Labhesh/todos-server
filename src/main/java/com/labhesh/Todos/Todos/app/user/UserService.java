@@ -1,10 +1,13 @@
 package com.labhesh.Todos.Todos.app.user;
 
 
+import com.labhesh.Todos.Todos.app.files.Files;
+import com.labhesh.Todos.Todos.app.files.FilesRepo;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
 import com.labhesh.Todos.Todos.utils.DateUtils;
 import com.labhesh.Todos.Todos.utils.ImageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,9 +18,11 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UsersRepo usersRepo;
+    private final FilesRepo filesRepo;
     private final ImageService imageService;
 
     public ResponseEntity<?> getMe() throws BadRequestException {
@@ -40,8 +45,16 @@ public class UserService {
 //        }
         if (!updateUserDto.getAvatar().isEmpty()){
             try {
-                user.setAvatarPath(imageService.saveImageToStorage(updateUserDto.getAvatar()));
-                user.setAvatarMediaType(updateUserDto.getAvatar().getContentType());
+                if (user.getFile() != null){
+                    filesRepo.delete(user.getFile());
+                    Files files = Files.builder()
+                            .fileName(updateUserDto.getAvatar().getOriginalFilename())
+                            .fileType(updateUserDto.getAvatar().getContentType())
+                            .data(updateUserDto.getAvatar().getBytes())
+                            .build();
+                    filesRepo.save(files);
+                    user.setFile(files);
+                }
             } catch (Exception e){
                 throw new InternalServerException(e.getMessage());
             }

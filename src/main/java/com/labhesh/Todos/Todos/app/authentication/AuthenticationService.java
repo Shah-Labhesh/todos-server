@@ -1,12 +1,13 @@
 package com.labhesh.Todos.Todos.app.authentication;
 
+import com.labhesh.Todos.Todos.app.files.Files;
+import com.labhesh.Todos.Todos.app.files.FilesRepo;
 import com.labhesh.Todos.Todos.app.user.Users;
 import com.labhesh.Todos.Todos.app.user.UsersRepo;
 import com.labhesh.Todos.Todos.config.JwtTokenUtil;
 import com.labhesh.Todos.Todos.config.PasswordEncoder;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
-import com.labhesh.Todos.Todos.utils.ImageService;
 import com.labhesh.Todos.Todos.utils.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,8 +30,8 @@ import java.util.concurrent.CompletableFuture;
 public class AuthenticationService {
 
     private final UsersRepo usersRepo;
+    private final FilesRepo filesRepo;
     private final MailService mailService;
-    private final ImageService imageService;
     private final JwtTokenUtil util;
 
     @Async
@@ -125,8 +126,13 @@ public class AuthenticationService {
         Users user = usersRepo.findById(UUID.fromString(userId)).orElseThrow(() -> new BadRequestException("User not found"));
         try{
             if (!avatar.isEmpty()){
-                user.setAvatarMediaType(avatar.getContentType());
-                user.setAvatarPath(imageService.saveImageToStorage(avatar));
+                Files files = Files.builder()
+                        .fileName(avatar.getOriginalFilename())
+                        .fileType(avatar.getContentType())
+                        .data(avatar.getBytes())
+                        .build();
+                filesRepo.save(files);
+                user.setFile(files);
                 usersRepo.save(user);
             }
 

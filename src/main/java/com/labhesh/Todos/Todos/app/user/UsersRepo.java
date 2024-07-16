@@ -17,6 +17,4 @@ public interface UsersRepo extends JpaRepository<Users, UUID>{
 
     List<Users> findAllByEmailIn(List<String> teamMembers);
 
-    @Query("SELECT u from Users u where u.avatarPath = :avatar")
-    Optional<Users> findByAvatarPath(@Param("avatar") String avatar);
 }
