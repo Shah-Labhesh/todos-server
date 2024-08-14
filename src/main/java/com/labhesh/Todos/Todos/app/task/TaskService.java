@@ -4,7 +4,6 @@ package com.labhesh.Todos.Todos.app.task;
 import com.labhesh.Todos.Todos.app.friendship.FriendshipService;
 import com.labhesh.Todos.Todos.app.task.dtos.AddTaskDto;
 import com.labhesh.Todos.Todos.app.task.dtos.UpdateTaskDto;
-import com.labhesh.Todos.Todos.app.team.TeamsRepo;
 import com.labhesh.Todos.Todos.app.user.Users;
 import com.labhesh.Todos.Todos.app.user.UsersRepo;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
@@ -27,7 +26,6 @@ import java.util.UUID;
 public class TaskService {
 
     private final TaskRepo taskRepo;
-    private final TeamsRepo teamsRepo;
     private final UsersRepo usersRepo;
     private final FriendshipService friendshipService;
 

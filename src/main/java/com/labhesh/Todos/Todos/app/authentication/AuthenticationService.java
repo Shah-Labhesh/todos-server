@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-@EnableAsync
 @RequiredArgsConstructor
 public class AuthenticationService {
 

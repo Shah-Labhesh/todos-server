@@ -1,24 +1,22 @@
 package com.labhesh.Todos.Todos.app.messaging;
 
-import com.labhesh.Todos.Todos.app.friendship.FriendshipService;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.ForbiddenException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MessagingSocket {
 

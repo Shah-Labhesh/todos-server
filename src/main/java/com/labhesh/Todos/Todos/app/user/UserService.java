@@ -5,15 +5,12 @@ import com.labhesh.Todos.Todos.app.files.Files;
 import com.labhesh.Todos.Todos.app.files.FilesRepo;
 import com.labhesh.Todos.Todos.exception.BadRequestException;
 import com.labhesh.Todos.Todos.exception.InternalServerException;
-import com.labhesh.Todos.Todos.utils.DateUtils;
-import com.labhesh.Todos.Todos.utils.ImageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Service
@@ -23,7 +20,6 @@ public class UserService {
 
     private final UsersRepo usersRepo;
     private final FilesRepo filesRepo;
-    private final ImageService imageService;
 
     public ResponseEntity<?> getMe() throws BadRequestException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
